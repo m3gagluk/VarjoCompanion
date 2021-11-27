@@ -27,7 +27,7 @@ namespace VarjoCompanion
         public void CopyFrom(VarjoEyeTracking.GazeRay ray, double pupil, VarjoEyeTracking.GazeEyeStatus status)
         {
             this.CopyFrom(ray, pupil);
-            opened = status == VarjoEyeTracking.GazeEyeStatus.Compensated || status == VarjoEyeTracking.GazeEyeStatus.Tracked;
+            opened = status != VarjoEyeTracking.GazeEyeStatus.Invalid;
         }
 
         public void CopyFrom(VarjoEyeTracking.GazeRay ray, double pupil, VarjoEyeTracking.GazeStatus status)
@@ -78,10 +78,8 @@ namespace VarjoCompanion
                 {
                     VarjoEyeTracking.GazeData gazeData;
                     Console.WriteLine("Eye tracking session has started!");
-                    while (true)
+                    while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Enter))
                     {
-                        accessor.Read(0, out memoryData);
-                        if (memoryData.shutdown) break; // It's time to shut down
                         gazeData = VarjoEyeTracking.GetGaze();
                         memoryData.CopyFrom(gazeData);
                         accessor.Write(0, ref memoryData);
